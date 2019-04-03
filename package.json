@@ -1,0 +1,29 @@
+{
+  "name": "custom-generator",
+  "version": "0.0.1",
+  "description": "Automate the generation of routing configurations and files",
+  "bin": {
+    "cg": "./bin/auto-generator.js",
+    "custom-generator": "./bin/auto-generator.js"
+  },
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "router",
+    "directory",
+    "files"
+  ],
+  "author": "wukangjun",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^2.4.2",
+    "commander": "^2.19.0",
+    "globby": "^9.1.0",
+    "make-dir": "^2.1.0",
+    "pretty": "^2.0.0",
+    "prettyjson": "^1.2.1",
+    "touch": "^3.1.0"
+  }
+}
