@@ -11,6 +11,7 @@ var { AutoGeneratorError, error } = require('../utils/error')
 var FactoryAssemblyLine = require('../utils/FactoryAssemblyLine')
 var assemblyline = new FactoryAssemblyLine()
 
+
 function eachStruct(
   parent, 
   lists,
@@ -31,21 +32,24 @@ function eachStruct(
             filepath,
             list.template,
             template,
-            variable)
+            variable,
+            rootName)
       }
       list.children
         && eachStruct(filepath, list.children, rootName, template, variable)
   })
 }
 
-function writeFileFromTemplate(writepath, tpl, template, variable) {
+function writeFileFromTemplate(writepath, tpl, template, variable, rootName) {
   var temp = tpl.replace(TPL_REGEXP, function(m, r1) {
     if (!template[r1]) {
       throw new AutoGeneratorError(
         `Please check whether there is template for '${r1}' field `)
     }
+
+    //  当模版的的字段为inherit 默认为路径名
     return template[r1].replace(FIELD_REGEXP, function(m, r2) {
-      return variable[r2]
+      return r2 === 'inherit' ? rootName : variable[r2]
     })
   })
   fs.writeFileSync(writepath, pretty(temp))

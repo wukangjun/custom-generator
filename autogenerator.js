@@ -31,21 +31,25 @@ module.exports = {
     style: `.app-container {}`,
     avue: `
       <template>
-        <section class="app-container"></section>
+        <section class="app-container [inherit]"></section>
       </template>
 
       <script>
+        /** 
+         * 
+         * @since: [now]
+        */
         export default {
-          
+          name: inherit
         }
       </script>
 
       <style>
-        
+      @import './style/index.scss'
       </style>
     `
   },
   variable: {
-
+    now: new Date()
   }
 }
