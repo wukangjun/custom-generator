@@ -1,6 +1,6 @@
 {
   "name": "custom-generator",
-  "version": "0.0.2",
+  "version": "1.0.0",
   "description": "Automate the generation of routing configurations and files",
   "bin": {
     "cg": "bin/auto-generator.js",
