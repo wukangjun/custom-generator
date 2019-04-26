@@ -10,6 +10,7 @@ module.exports = {
   appBuild: resolveApp('build'),
   appPublic: resolveApp('public'),
   appSrc: resolveApp('src'),
+  appAutogenerator: resolveApp('autogenerator.js'),     //autogenerator
   appPackageJson: resolveApp('package.json'),
   ownApp: resolveOwn('.'),
   ownBuild: resolveOwn('build'),

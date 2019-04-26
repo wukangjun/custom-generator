@@ -30,3 +30,7 @@ exports.replaceTemplate = function(config) {
 
 exports.FIELD_REGEXP = FIELD_REGEXP
 exports.INHERITS_REGEXP = INHERITS_REGEXP
+
+exports.blue = function(str) {
+  return '\x1b[1m\x1b[34m' + str + '\x1b[39m\x1b[22m'
+}

@@ -1,10 +1,12 @@
-var fs = require('fs')
-var path = require('path')
-var chalk = require('chalk')
-var { isObject, isEmptyObject } = require('../utils/helper')
-var { AutoGeneratorError } = require('../utils/error')
+const fs = require('fs')
+const path = require('path')
+const paths = require('../config/paths')
+const chalk = require('chalk')
+const promptConfig = require('./promptConfig')
+const { isObject, isEmptyObject } = require('../utils/helper')
+const { AutoGeneratorError } = require('../utils/error')
 
-var configCache = {}
+const configCache = {}
 exports.uploadConfig = function(dir) {
   var cacheKey = exports.isFile(dir) ? path.dirname(dir) : dir
   if (cacheKey in configCache) {
@@ -15,7 +17,7 @@ exports.uploadConfig = function(dir) {
   return config
 }
 
-exports.findConfig = function(dir) {
+exports.findConfig = async function(dir) {
   var config = path.join(dir, 'autogenerator.js')
   var pkg = path.join(dir, 'package.json')
   var rc = path.join(dir, '.autogeneratorrc')
@@ -45,7 +47,13 @@ exports.findConfig = function(dir) {
   } else if (exports.isFile(rc)) {
     return exports.readConfig(rc, 'autoload')
   } else {
-    return autogeneratorConfig
+    if (autogeneratorConfig) {
+      return autogeneratorConfig
+    } else {
+      // 说明没有配置项，这里让用户自动选择自己需要的配置，下载到他的本地
+      await promptConfig()
+      return exports.findConfig(paths.appPath)
+    }
   }
 }
 
@@ -79,15 +87,8 @@ exports.readConfig = function(filename, type) {
 }
 
 /**
- * struct: {
- *  { type: 'file', name: 'index.js', tmplate: 'index' },
- *  { type: 'dir', name: 'src' },
- *  { type: 'dir', name: 'style', children: [ { type: 'file', name: 'index.scss', template: 'style' } ] }
- * }
- * tmplate: {
- *  index: 'export default A'
- *  style: '@import a.css'
- * }
+ * 从package.json 解析autogenerator的配置数据
+ * 
  * @param {*} dir
  */
 function parseConfigFromPackage(dir) {

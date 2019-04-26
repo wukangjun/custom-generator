@@ -3,12 +3,13 @@
   "version": "0.0.2",
   "description": "Automate the generation of routing configurations and files",
   "bin": {
-    "cg": "./bin/auto-generator.js",
-    "custom-generator": "./bin/auto-generator.js"
+    "cg": "bin/auto-generator.js",
+    "custom-generator": "bin/auto-generator.js"
   },
-  "main": "index.js",
+  "main": "bin/auto-generator.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node bin/auto-generator.js"
   },
   "keywords": [
     "router",
@@ -25,5 +26,9 @@
     "pretty": "^2.0.0",
     "prettyjson": "^1.2.1",
     "touch": "^3.1.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wukangjun/custom-generator.git"
   }
 }

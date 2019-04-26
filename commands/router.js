@@ -7,7 +7,7 @@ var paths = require('../config/paths')
 var { warn } = require('../utils/warn')
 var { isDirectory } = require('../utils')
 var { isObject, FIELD_REGEXP } = require('../utils/helper')
-var { AutoGeneratorError, error } = require('../utils/error')
+var { AutoGeneratorError } = require('../utils/error')
 var FactoryAssemblyLine = require('../utils/FactoryAssemblyLine')
 var assemblyline = new FactoryAssemblyLine()
 
@@ -32,7 +32,8 @@ assemblyline
         'The router field `entry` is not found in `'+ process.env.AUTOGENERATOR_FILENAME +'`')
     } else if (!fs.existsSync(config.entry)) {
       throw new AutoGeneratorError(
-        'The router `entry` file is not exist')
+        'The router `entry` file is not exist \n' +
+        'Please check the entry in your router field')
     } else if (fs.existsSync(config.entry) && !isDirectory(config.entry)) {
       throw new AutoGeneratorError(
         'The router `entry` is not `directory`type')

@@ -1,11 +1,16 @@
+var chalk = require('chalk')
 var program = require('commander')
 var paths = require('../config/paths')
 var { findConfig } = require('../utils/index')
 var routerGenerator = require('./router')
 
 var pkg = require(paths.appPackageJson)
-module.exports = function() {
-  var config = findConfig(paths.appPath)
+
+/**
+ * 目前初始化： 路由配置初始化
+ */
+module.exports = async function() {
+  var config = await findConfig(paths.appPath)
   if (config) {
     routerGenerator(config)
   } else {
@@ -15,6 +20,6 @@ module.exports = function() {
 
 function error(mess) {
   program.outputHelp()
-  process.stderr.write(`${pkg.name}: ${mess} \n`)
+  console.log(chalk.red(`${pkg.name}: ${mess} \n`))
   process.exit(1)
 }

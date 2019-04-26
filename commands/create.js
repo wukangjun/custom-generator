@@ -1,19 +1,20 @@
-var fs = require('fs')
-var path = require('path')
-var touch = require('touch')
-var mkdir = require('make-dir')
-var pretty = require('pretty')
-var paths = require('../config/paths')
-var variable = require('../config/variable')
-var { findConfig } = require('../utils/index')
-var { TPL_REGEXP, INHERITS_REGEXP, FIELD_REGEXP } = require('../utils/helper') 
-var { AutoGeneratorError, error } = require('../utils/error')
-var FactoryAssemblyLine = require('../utils/FactoryAssemblyLine')
-var assemblyline = new FactoryAssemblyLine()
+const fs = require('fs')
+const path = require('path')
+const touch = require('touch')
+const chalk = require('chalk')
+const mkdir = require('make-dir')
+const pretty = require('pretty')
+const paths = require('../config/paths')
+const variable = require('../config/variable')
+const { findConfig } = require('../utils/index')
+const { TPL_REGEXP, INHERITS_REGEXP, FIELD_REGEXP } = require('../utils/helper') 
+const { AutoGeneratorError, error } = require('../utils/error')
+const FactoryAssemblyLine = require('../utils/FactoryAssemblyLine')
+const assemblyline = new FactoryAssemblyLine()
 
 
 function eachStruct(
-  parent, 
+  parent,
   lists,
   rootName, 
   template, 
@@ -27,13 +28,9 @@ function eachStruct(
         mkdir.sync(filepath)
       } else if (list.type === 'file'){
         touch.sync(filepath)
-        list.template
-          && writeFileFromTemplate(
-            filepath,
-            list.template,
-            template,
-            variable,
-            rootName)
+        if (list.template) {
+          writeFileFromTemplate(filepath, list.template, template, variable, rootName)
+        }
       }
       list.children
         && eachStruct(filepath, list.children, rootName, template, variable)
@@ -55,10 +52,11 @@ function writeFileFromTemplate(writepath, tpl, template, variable, rootName) {
   fs.writeFileSync(writepath, pretty(temp))
 }
 
-module.exports = function(params) {
+module.exports = async function(params) {
+  const generatorConfig = await findConfig(paths.appPath)
   try {
     assemblyline.start({
-      ...findConfig(paths.appPath),
+      ...generatorConfig,
       structKey: params.program.struct,
       targetFilename: params.options.split(',')
     })
@@ -75,19 +73,26 @@ assemblyline
    * @param {Object} config = { key, lists }
    */
   .pipe(function(config) {
-    var struct = config.struct[config.structKey]
-    config.targetFilename.forEach(filename => {
-      filename = path.resolve(paths.appPath, filename)
-      if (fs.existsSync(filename)) {
-        throw new AutoGeneratorError(
-          `Directory '${filename}' already exists in your project`)
-      }
-      mkdir.sync(filename)
-      eachStruct(
-        filename, 
-        struct, 
-        path.basename(filename),
-        config.template || {},
-        Object.assign({}, variable, config.variable))
-    })
+    try {
+      var struct = config.struct[config.structKey]
+      config.targetFilename.forEach(filename => {
+        filename = path.resolve(paths.appPath, filename)
+        if (fs.existsSync(filename)) {
+          throw new AutoGeneratorError(
+            `Directory '${filename}' already exists in your project`)
+        }
+        mkdir.sync(filename)
+        eachStruct(
+          filename, 
+          struct, 
+          path.basename(filename),
+          config.template || {},
+          Object.assign({}, variable, config.variable))
+        
+        console.log(chalk.green(`success: ${filename} was created successfully in your project`))
+      }) 
+    } catch (e) {
+      error(`
+        the struct field does not have the ${config.structKey} keyword from autogenerator.js`)
+    }
   })

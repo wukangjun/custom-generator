@@ -9,8 +9,11 @@ program
   .option('-r, --router <items>', 'The read configuration generates the route', split)
   .option('-s --struct [type]', 'hello world')
 
+// first command is not accept the argument of second
+// 采用了description
 program
-  .command('init', 'Initialize the routing configuration')
+  .command('init')
+  .description('Initialize the routing configuration')
   .command('create [options...]', 'Custom manual file template creation')
 
 program
