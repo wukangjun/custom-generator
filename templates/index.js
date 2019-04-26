@@ -1,3 +1,3 @@
 module.exports = {
-  vue: require('./vue/autogenerator')
+  vue: require('./vue/tpl')
 }
